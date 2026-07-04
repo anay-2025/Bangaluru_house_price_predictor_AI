@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bangalore House Price Predictor</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body{
+            background: linear-gradient(135deg,#0f172a,#1e293b);
+        }
+
+        input,select{
+            transition: all .3s ease;
+        }
+
+        input:focus,select:focus{
+            transform: scale(1.02);
+        }
+    </style>
+
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-6">
+
+<div class="bg-white shadow-2xl rounded-3xl w-full max-w-5xl overflow-hidden">
+
+    <div class="bg-gradient-to-r from-blue-700 to-cyan-500 p-8">
+
+        <h1 class="text-5xl font-bold text-white text-center">
+            Bangalore House Price Predictor
+        </h1>
+
+        <p class="text-center text-blue-100 mt-4 text-lg">
+            Enter the property details below and predict the estimated market value instantly.
+        </p>
+
+    </div>
+
+    <div class="p-10">
+
+        <form method="POST">
+
+            <div class="grid md:grid-cols-2 gap-8">
+
+                <div>
+
+                    <label class="block mb-2 font-semibold text-gray-700">
+                        Location
+                    </label>
+
+                    <select
+                        name="location" required
+                        class="w-full border border-gray-300 bg-gray-50 text-gray-700 rounded-xl p-3 focus:outline-none focus:ring-4 focus:ring-blue-300">
+
+                        <option value="" selected disabled>Select a Location</option>
+                        {% for location in locations %}
+                        <option value="{{location}}">
+                            {{location}}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label class="block mb-2 font-semibold text-gray-700">
+                        BHK
+                    </label>
+
+                    <div>
+
+                    <select
+                        name="bhk" required
+                        class="w-full border border-gray-300 bg-gray-50 text-gray-700 rounded-xl p-3 focus:outline-none focus:ring-4 focus:ring-blue-300">
+
+                        <option value="" selected disabled>Select BHK</option>
+                        <option value="1">1 BHK</option>
+                        <option value="2">2 BHK</option>
+                        <option value="3">3 BHK</option>
+                        <option value="4">4 BHK</option>
+
+                    </select>
+
+                </div>
+
+                </div>
+
+
+
+                <div>
+
+                    <label class="block mb-2 font-semibold text-gray-700">
+                        Bathrooms
+                    </label>
+
+                    <select
+                        name="bath" required
+                        class="w-full border border-gray-300 bg-gray-50 text-gray-700 rounded-xl p-3 focus:outline-none focus:ring-4 focus:ring-blue-300">
+
+                        <option value="" selected disabled>Select Bathrooms</option>
+                        <option value="1">1 Bathrooms</option>
+                        <option value="2">2 Bathrooms</option>
+                        <option value="3">3 Bathrooms</option>
+                        <option value="4">4 Bathrooms</option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div>
+
+                    <label class="block mb-2 font-semibold text-gray-700">
+                        Total Square Feet
+                    </label>
+
+                    <select
+                        name="sqft" required
+                        class="w-full border border-gray-300 bg-gray-50 text-gray-700 rounded-xl p-3 focus:outline-none focus:ring-4 focus:ring-blue-300">
+
+                        <option value="" selected disabled>Select Area</option>
+                        <option value="1000">1000 Sq Ft</option>
+                        <option value="1500">1500 Sq Ft</option>
+                        <option value="2000">2000 Sq Ft</option>
+                        <option value="3000">3000 Sq Ft</option>                      
+
+                    </select>
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                class="mt-10 w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold py-4 rounded-xl text-lg transition duration-300 shadow-lg">
+
+                Predict Price
+
+            </button>
+
+        </form>
+        <br>
+
+        <div class="mt-10">
+
+            <div
+                id="prediction"
+                class="hidden bg-green-100 border-l-4 border-green-500 text-green-800 rounded-xl p-5 text-3xl font-bold text-center">
+
+            </div>
+
+        </div>
+
+        
+
+    </div>
+    <footer class="mt-10 pt-5 border-t border-white/10 text-center text-sm tracking-[0.5px]">
+        <p class="text-gray-600">
+            © Copyright anay_2026
+        </p>
+    </footer>
+</div>
+
+
+</body>
+</html>
+
+<script>
+
+const form = document.querySelector("form");
+
+form.addEventListener("submit", function(e){
+    e.preventDefault();
+    get_prediction();
+});
+
+function get_prediction(){
+
+    const fd = new FormData(form);
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.open("POST","/predict",true);
+
+    const prediction = document.getElementById("prediction");
+    prediction.classList.remove("hidden");
+    prediction.innerHTML = "Predicting...";
+
+    xhr.onreadystatechange = function(){
+
+        if(xhr.readyState === XMLHttpRequest.DONE){
+
+            document.getElementById("prediction").innerHTML =
+                "Predicted Price : ₹ " + xhr.responseText + " Lakhs";
+        }
+
+    };
+
+    xhr.send(fd);
+
+}
+</script>
